@@ -9,7 +9,7 @@
 					"description": "تکی هشتاد هزارت تومان و خرید عمده هر عدد شصت و پنج هزار تومان. کفشدوزک، مینیون، زرافه، ببعی، اسب تکشاخ، بابانوئل، پنگوئن و شرک",
 					"available": 3,
 					"images": [
-						"products/a01/0.jpg"
+						"products/arosaki-01-01.jpg"
 					],
 					"mainImage": 0
 				},
@@ -20,11 +20,11 @@
 					"description": "در رنگ‌بندی متنوع",
 					"available": 3,
 					"images": [
-						"products/l01/0.jpg",
-						"products/l01/1.jpg",
-						"products/l01/2.jpg",
-						"products/l01/3.jpg",
-						"products/l01/4.jpg"
+						"products/washcloth-01-01.jpg",
+						"products/washcloth-01-02.jpg",
+						"products/washcloth-01-03.jpg",
+						"products/washcloth-01-04.jpg",
+						"products/washcloth-01-05.jpg"
 					],
 					"mainImage": 1
 				},
@@ -35,7 +35,7 @@
 					"description": "تکی هشتاد هزارت تومان و خرید عمده هر عدد شصت و پنج هزار تومان. بابانوئل برای کریسمس",
 					"available": 3,
 					"images": [
-						"products/a02/0.jpg"
+						"products/a020.jpg"
 					],
 					"mainImage": 0
 				}
@@ -50,7 +50,7 @@
 					"description": "اسکاج نوع یک",
 					"available": 5,
 					"images": [
-						"products/e01/0.jpg"
+						"products/dishcloth-01-01.jpg"
 					],
 					"mainImage": 0
 				},
@@ -61,7 +61,7 @@
 					"description": "اسکاج نوع دو",
 					"available": 5,
 					"images": [
-						"products/e02/0.jpg"
+						"products/dishcloth-02-01.jpg"
 					],
 					"mainImage": 0
 				},
@@ -72,7 +72,7 @@
 					"description": "اسکاج نوع سه",
 					"available": 5,
 					"images": [
-						"products/e03/0.jpg"
+						"products/dishcloth-03-01.jpg"
 					],
 					"mainImage": 0
 				},
@@ -83,7 +83,7 @@
 					"description": "اسکاج نوع سه",
 					"available": 5,
 					"images": [
-						"products/e04/0.jpg"
+						"products/dishcloth-04-01.jpg"
 					],
 					"mainImage": 0
 				},
@@ -94,7 +94,7 @@
 					"description": "اسکاج نوع پنج",
 					"available": 5,
 					"images": [
-						"products/e05/0.jpg"
+						"products/dishcloth-05-01.jpg"
 					],
 					"mainImage": 0
 				}
@@ -109,7 +109,7 @@
 					"description": "کاکتوس انجیرتیغی (Opuntia) بومی آمریکا و پوست کلفت است.",
 					"available": 5,
 					"images": [
-						"products/c01/0.jpg"
+						"products/opuntia-01-01.jpg"
 					],
 					"mainImage": 0
 				}
