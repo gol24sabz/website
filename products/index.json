@@ -1,0 +1,125 @@
+{
+	"categories": {
+		"لیف عروسکی": {
+			"products": [
+				{
+					"id": "1",
+					"name": "لیف‌های عروسکی",
+					"price": 80000,
+					"description": "تکی هشتاد هزارت تومان و خرید عمده هر عدد شصت و پنج هزار تومان. کفشدوزک، مینیون، زرافه، ببعی، اسب تکشاخ، بابانوئل، پنگوئن و شرک",
+					"available": 3,
+					"images": [
+						"products/a01/0.jpg",
+						"products/a01/1.jpg",
+						"products/a01/2.jpg"
+					],
+					"mainImage": 0
+				},
+				{
+					"id": "2",
+					"name": "لیف بابانوئل",
+					"price": 80000,
+					"description": "تکی هشتاد هزارت تومان و خرید عمده هر عدد شصت و پنج هزار تومان. بابانوئل برای کریسمس",
+					"available": 3,
+					"images": [
+						"products/a02/0.jpg"
+					],
+					"mainImage": 0
+				}
+			]
+		},
+		"لیف دم‌دار": {
+			"products": [
+				{
+					"id": "1",
+					"name": "لیف دم دار",
+					"price": 80000,
+					"description": "در رنگ‌بندی متنوع",
+					"available": 3,
+					"images": [
+						"products/l01/0.jpg",
+						"products/l01/1.jpg",
+						"products/l01/2.jpg",
+						"products/l01/3.jpg",
+						"products/l01/4.jpg"
+					],
+					"mainImage": 0
+				}
+			]
+		},
+		"اسکاج": {
+			"products": [
+				{
+					"id": "1",
+					"name": "نوع یک",
+					"price": 45000,
+					"description": "اسکاج نوع یک",
+					"available": 5,
+					"images": [
+						"products/e01/0.jpg"
+					],
+					"mainImage": 0
+				},
+				{
+					"id": "2",
+					"name": "نوع دو",
+					"price": 50000,
+					"description": "اسکاج نوع دو",
+					"available": 5,
+					"images": [
+						"products/e02/0.jpg"
+					],
+					"mainImage": 0
+				},
+				{
+					"id": "3",
+					"name": "نوع سه",
+					"price": 45000,
+					"description": "اسکاج نوع سه",
+					"available": 5,
+					"images": [
+						"products/e03/0.jpg"
+					],
+					"mainImage": 0
+				},
+				{
+					"id": "4",
+					"name": "نوع چهار",
+					"price": 45000,
+					"description": "اسکاج نوع سه",
+					"available": 5,
+					"images": [
+						"products/e04/0.jpg"
+					],
+					"mainImage": 0
+				},
+				{
+					"id": "5",
+					"name": "نوع پنج",
+					"price": 50000,
+					"description": "اسکاج نوع پنج",
+					"available": 5,
+					"images": [
+						"products/e05/0.jpg"
+					],
+					"mainImage": 0
+				}
+			]
+		},
+		"کاکتوس": {
+			"products": [
+				{
+					"id": "1",
+					"name": "کاکتوس انجیرتیغی",
+					"price": 300000,
+					"description": "کاکتوس انجیرتیغی (Opuntia) بومی آمریکا و پوست کلفت است.",
+					"available": 5,
+					"images": [
+						"products/c01/0.jpg"
+					],
+					"mainImage": 0
+				}
+			]
+		}
+	}
+}

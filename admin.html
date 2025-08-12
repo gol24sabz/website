@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>مدیریت محصولات</title>
+		<link rel="stylesheet" href="main.css">
+		<style>
+.loading {
+	display: none;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: rgba(0,0,0,0.8);
+	color: white;
+	padding: 20px;
+	border-radius: 5px;
+	z-index: 1000;
+}
+.image-preview { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
+.preview-item { position: relative; width: 100px; }
+.preview-item img { width: 100%; height: auto; border: 1px solid #ddd; }
+.remove-img {
+	position: absolute; top: 0; left: 0;
+	background: red; color: white; border: none; cursor: pointer;
+}
+    select, input, textarea {
+	    width: 100%; padding: 8px; margin: 5px 0;
+	    border: 1px solid var(--text);
+    }
+		</style>
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				const savedTheme = localStorage.getItem('theme') || 'light';
+				document.documentElement.setAttribute('data-theme', savedTheme);
+				showTab('add');
+			});
+		</script>
+	</head>
+	<body>
+		<h1>مدیریت محصولات</h1>
+		<div class="loading" id="loading">در حال ذخیره در گیتهاب...</div>
+
+		<div class="tab-buttons">
+			<button onclick="showTab('add')">افزودن محصول</button>
+			<button onclick="showTab('edit')">ویرایش محصولات</button>
+		</div>
+
+		<div id="add" class="tab">
+			<form id="add-form">
+				<select id="category" required>
+					<option value="">انتخاب دسته‌بندی</option>
+					<option value="new">اضافه کردن دسته‌بندی جدید</option>
+				</select>
+				<input type="text" id="new-category" placeholder="نام دسته‌بندی جدید" style="display: none;">
+				<input type="text" id="name" placeholder="نام محصول" required>
+				<input type="number" id="price" placeholder="قیمت" min="0" required>
+				<input type="number" id="available" placeholder="تعداد موجود" min="0" required>
+				<textarea id="description" placeholder="توضیحات"></textarea>
+
+				<label>تصاویر محصول:</label>
+				<input type="file" id="image" accept="image/*" multiple required>
+				<div class="image-preview" id="image-preview"></div>
+
+				<button type="submit">ذخیره</button>
+			</form>
+		</div>
+
+		<div id="edit" class="tab">
+			<div id="category-selector"></div>
+			<div id="product-selector" style="display: none;">
+				<select id="product-list"></select>
+			</div>
+			<div id="product-edit-form" style="display: none;">
+				<input type="text" id="edit-name" placeholder="نام محصول">
+				<input type="number" id="edit-price" placeholder="قیمت" min="0">
+				<input type="number" id="edit-available" placeholder="تعداد موجود" min="0">
+				<textarea id="edit-description" placeholder="توضیحات"></textarea>
+
+				<label>تصاویر محصول:</label>
+				<div class="image-preview" id="edit-image-preview"></div>
+				<input type="file" id="edit-new-images" accept="image/*" multiple>
+				<button onclick="saveProductChanges()">ذخیره تغییرات</button>
+				<button onclick="deleteProduct()">حذف محصول</button>
+			</div>
+		</div>
+
+		<script>
+			// Configuration - Set these in Liara environment variables
+			const GITHUB_CONFIG = {
+				USER: "gol24sabz",
+				REPO: "website",
+				BRANCH: "main",
+				TOKEN: localStorage.getItem('github_token') || ""
+			};
+
+			// Global variables
+			let productsData = { categories: {} };
+			let currentCategory = '';
+			let currentProductId = '';
+
+			// Tab Switching
+			function showTab(tabId) {
+				document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+				document.getElementById(tabId).classList.add('active');
+
+				if (tabId === 'edit') {
+					loadProducts();
+				} else {
+					document.getElementById('add-form').reset();
+					document.getElementById('image-preview').innerHTML = '';
+				}
+			}
+
+			// Initialize GitHub token
+			async function initGitHubToken() {
+				if (!GITHUB_CONFIG.TOKEN) {
+					// Try to get from environment (Liara will inject this)
+					GITHUB_CONFIG.TOKEN = process.env.GITHUB_TOKEN || "";
+
+					// Fallback: Prompt user if running locally
+					if (!GITHUB_CONFIG.TOKEN && window.location.hostname === 'localhost') {
+						GITHUB_CONFIG.TOKEN = prompt("لطفاً توکن GitHub خود را وارد کنید:");
+						if (GITHUB_CONFIG.TOKEN) localStorage.setItem('github_token', GITHUB_CONFIG.TOKEN);
+					}
+				}
+			}
+
+
+			// Show/hide loading indicator
+			function showLoading(show) {
+				document.getElementById('loading').style.display = show ? 'block' : 'none';
+			}
+
+			// Image Preview Handling
+			function setupImagePreview(inputId, previewId) {
+				document.getElementById(inputId).addEventListener('change', function(e) {
+					const preview = document.getElementById(previewId);
+					preview.innerHTML = '';
+
+					Array.from(e.target.files).forEach((file, index) => {
+						const reader = new FileReader();
+						reader.onload = (event) => {
+							const previewItem = document.createElement('div');
+							previewItem.className = 'preview-item';
+							previewItem.innerHTML = `
+	    <img src="${event.target.result}" alt="پیش نمایش تصویر">
+	    <button class="remove-img" data-index="${index}">×</button>
+	  `;
+							preview.appendChild(previewItem);
+
+							previewItem.querySelector('.remove-img').addEventListener('click', (e) => {
+								e.preventDefault();
+								const files = Array.from(document.getElementById(inputId).files);
+								files.splice(parseInt(e.target.dataset.index), 1);
+
+								const dataTransfer = new DataTransfer();
+								files.forEach(file => dataTransfer.items.add(file));
+								document.getElementById(inputId).files = dataTransfer.files;
+								document.getElementById(inputId).dispatchEvent(new Event('change'));
+							});
+						};
+						reader.readAsDataURL(file);
+					});
+				});
+			}
+
+			// Push changes to GitHub
+			async function pushToGitHub() {
+				await initGitHubToken();
+				if (!GITHUB_CONFIG.TOKEN) throw new Error("توکن GitHub یافت نشد");
+
+				showLoading(true);
+
+				try {
+					// 1. Get current SHA if file exists
+					let sha = null;
+					try {
+						const res = await fetch(
+							`https://api.github.com/repos/${GITHUB_CONFIG.USER}/${GITHUB_CONFIG.REPO}/contents/products/index.json`,
+							{ headers: { "Authorization": `token ${GITHUB_CONFIG.TOKEN}` } }
+						);
+						if (res.ok) sha = (await res.json()).sha;
+					} catch {} // File doesn't exist yet
+
+					// 2. Push changes to GitHub
+					const response = await fetch(
+						`https://api.github.com/repos/${GITHUB_CONFIG.USER}/${GITHUB_CONFIG.REPO}/contents/products/index.json`,
+						{
+							method: "PUT",
+							headers: {
+								"Authorization": `token ${GITHUB_CONFIG.TOKEN}`,
+								"Content-Type": "application/json"
+							},
+							body: JSON.stringify({
+								message: "Update products via admin panel",
+								content: btoa(unescape(encodeURIComponent(JSON.stringify(productsData, null, 2)))),
+								sha: sha,
+								branch: GITHUB_CONFIG.BRANCH
+							})
+						}
+					);
+
+					if (!response.ok) {
+						const error = await response.json();
+						throw new Error(error.message || "خطا در ذخیره روی گیتهاب");
+					}
+
+					return await response.json();
+				} finally {
+					showLoading(false);
+				}
+			}
+
+
+			// Setup image previews
+			setupImagePreview('image', 'image-preview');
+			setupImagePreview('edit-new-images', 'edit-image-preview');
+
+			// Load Products Data
+			async function loadProducts() {
+				try {
+					const response = await fetch('products/index.json');
+					if (!response.ok) throw new Error('خطا در بارگذاری محصولات');
+
+					productsData = await response.json();
+					populateCategorySelectors();
+				} catch (error) {
+					alert(error.message);
+				}
+			}
+
+			// Populate category selectors
+			function populateCategorySelectors() {
+				// For add form
+				const addCategorySelect = document.getElementById('category');
+				addCategorySelect.innerHTML = '<option value="">انتخاب دسته‌بندی</option><option value="new">اضافه کردن دسته‌بندی جدید</option>';
+
+				// For edit form
+				const categorySelector = document.getElementById('category-selector');
+				categorySelector.innerHTML = '<select id="edit-category"><option value="">انتخاب دسته‌بندی</option></select>';
+
+				Object.keys(productsData.categories).forEach(category => {
+					// Add to add form
+					const option = document.createElement('option');
+					option.value = category;
+					option.textContent = category;
+					addCategorySelect.appendChild(option.cloneNode(true));
+
+					// Add to edit form
+					document.getElementById('edit-category').appendChild(option);
+				});
+
+				document.getElementById('edit-category').addEventListener('change', function() {
+					currentCategory = this.value;
+					populateProductSelector();
+				});
+			}
+
+			// Populate product selector
+			function populateProductSelector() {
+				const productSelector = document.getElementById('product-selector');
+				const productList = document.getElementById('product-list');
+
+				if (!currentCategory || !productsData.categories[currentCategory]) {
+					productSelector.style.display = 'none';
+					document.getElementById('product-edit-form').style.display = 'none';
+					return;
+				}
+
+				productList.innerHTML = '<option value="">انتخاب محصول</option>';
+				productsData.categories[currentCategory].products.forEach(product => {
+					const option = document.createElement('option');
+					option.value = product.id;
+					option.textContent = product.name;
+					productList.appendChild(option);
+				});
+
+				productSelector.style.display = 'block';
+				productList.addEventListener('change', function() {
+					currentProductId = this.value;
+					loadProductForEditing();
+				});
+			}
+
+			// Load product for editing
+			function loadProductForEditing() {
+				const editForm = document.getElementById('product-edit-form');
+
+				if (!currentProductId) {
+					editForm.style.display = 'none';
+					return;
+				}
+
+				const product = productsData.categories[currentCategory].products.find(p => p.id === currentProductId);
+				if (!product) return;
+
+				document.getElementById('edit-name').value = product.name;
+				document.getElementById('edit-price').value = product.price;
+				document.getElementById('edit-available').value = product.available;
+				document.getElementById('edit-description').value = product.description || '';
+
+				const preview = document.getElementById('edit-image-preview');
+				preview.innerHTML = '';
+				product.images.forEach((img, index) => {
+					preview.innerHTML += `
+	<div class="preview-item">
+	  <img src="${img}" alt="${product.name}">
+	  <button class="remove-img" data-index="${index}">×</button>
+	</div>
+      `;
+				});
+
+				// Add remove handlers for existing images
+				preview.querySelectorAll('.remove-img').forEach(btn => {
+					btn.addEventListener('click', function() {
+						const index = parseInt(this.dataset.index);
+						productsData.categories[currentCategory].products.find(p => p.id === currentProductId).images.splice(index, 1);
+						loadProductForEditing();
+					});
+				});
+
+				editForm.style.display = 'block';
+			}
+
+			// Save product changes
+			async function saveProductChanges() {
+				const product = productsData.categories[currentCategory].products.find(p => p.id === currentProductId);
+				if (!product) return;
+
+				product.name = document.getElementById('edit-name').value;
+				product.price = parseInt(document.getElementById('edit-price').value);
+				product.available = parseInt(document.getElementById('edit-available').value);
+				product.description = document.getElementById('edit-description').value;
+
+				// Handle new images (in a real app, you would upload these)
+				const newImages = document.getElementById('edit-new-images').files;
+				if (newImages.length > 0) {
+					for (let i = 0; i < newImages.length; i++) {
+						const newFileName = `products/${currentProductId}/${product.images.length + i + 1}.jpg`;
+						product.images.push(newFileName);
+					}
+				}
+
+				try {
+					await pushToGitHub();
+					alert("تغییرات با موفقیت ذخیره شد و به گیتهاب ارسال شد!");
+					loadProductForEditing();
+				} catch (error) {
+					alert("خطا در ارسال به گیتهاب: " + error.message);
+				}
+			}
+
+			// Delete product
+			async function deleteProduct() {
+				if (!confirm(`آیا از حذف این محصول مطمئن هستید؟`)) return;
+
+				const categoryProducts = productsData.categories[currentCategory].products;
+				productsData.categories[currentCategory].products = categoryProducts.filter(p => p.id !== currentProductId);
+
+				// If category is empty, remove it
+				if (categoryProducts.length === 0) {
+					delete productsData.categories[currentCategory];
+				}
+
+				try {
+					await pushToGitHub();
+					alert("محصول حذف شد و تغییرات به گیتهاب ارسال شد");
+					currentProductId = '';
+					populateCategorySelectors();
+				} catch (error) {
+					alert("خطا در ارسال به گیتهاب: " + error.message);
+				}
+			}
+
+			// Add new product
+			async function handleAddProduct(e) {
+				e.preventDefault();
+
+				const categorySelect = document.getElementById('category');
+				const newCategoryInput = document.getElementById('new-category');
+				const category = categorySelect.value === 'new' ? newCategoryInput.value : categorySelect.value;
+
+				if (!category) {
+					alert("لطفاً یک دسته‌بندی انتخاب کنید");
+					return;
+				}
+
+				const files = document.getElementById('image').files;
+				if (!files.length) {
+					alert("لطفاً حداقل یک تصویر انتخاب کنید");
+					return;
+				}
+
+				// Create product ID
+				const productId = Date.now().toString();
+				const productName = document.getElementById('name').value;
+
+				// Create image paths (in a real app, you would upload these)
+				const imagePaths = [];
+				for (let i = 0; i < files.length; i++) {
+					imagePaths.push(`products/${productId}/${i+1}.jpg`);
+				}
+
+				// Add to products data
+				if (!productsData.categories[category]) {
+					productsData.categories[category] = { products: [] };
+				}
+
+				productsData.categories[category].products.push({
+					id: productId,
+					name: productName,
+					price: parseInt(document.getElementById('price').value),
+					available: parseInt(document.getElementById('available').value),
+					description: document.getElementById('description').value,
+					images: imagePaths,
+					mainImage: 0
+				});
+
+				try {
+					await pushToGitHub();
+					alert("محصول جدید ذخیره شد و به گیتهاب ارسال شد!");
+					document.getElementById('add-form').reset();
+					document.getElementById('image-preview').innerHTML = '';
+					newCategoryInput.style.display = 'none';
+					loadProducts(); // Refresh the edit tab
+				} catch (error) {
+					alert("خطا در ارسال به گیتهاب: " + error.message);
+				}
+			}
+
+			// Initialize
+			document.addEventListener('DOMContentLoaded', () => {
+				document.getElementById('add-form').addEventListener('submit', handleAddProduct);
+				loadProducts();
+			});
+		</script>
+
+	</body>
+</html>
