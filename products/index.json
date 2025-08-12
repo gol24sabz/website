@@ -1,6 +1,6 @@
 {
 	"categories": {
-		"لیف عروسکی": {
+		"لیف": {
 			"products": [
 				{
 					"id": "1",
@@ -9,29 +9,12 @@
 					"description": "تکی هشتاد هزارت تومان و خرید عمده هر عدد شصت و پنج هزار تومان. کفشدوزک، مینیون، زرافه، ببعی، اسب تکشاخ، بابانوئل، پنگوئن و شرک",
 					"available": 3,
 					"images": [
-						"products/a01/0.jpg",
-						"products/a01/1.jpg",
-						"products/a01/2.jpg"
+						"products/a01/0.jpg"
 					],
 					"mainImage": 0
 				},
 				{
 					"id": "2",
-					"name": "لیف بابانوئل",
-					"price": 80000,
-					"description": "تکی هشتاد هزارت تومان و خرید عمده هر عدد شصت و پنج هزار تومان. بابانوئل برای کریسمس",
-					"available": 3,
-					"images": [
-						"products/a02/0.jpg"
-					],
-					"mainImage": 0
-				}
-			]
-		},
-		"لیف دم‌دار": {
-			"products": [
-				{
-					"id": "1",
 					"name": "لیف دم دار",
 					"price": 80000,
 					"description": "در رنگ‌بندی متنوع",
@@ -42,6 +25,17 @@
 						"products/l01/2.jpg",
 						"products/l01/3.jpg",
 						"products/l01/4.jpg"
+					],
+					"mainImage": 1
+				},
+				{
+					"id": "3",
+					"name": "لیف بابانوئل",
+					"price": 80000,
+					"description": "تکی هشتاد هزارت تومان و خرید عمده هر عدد شصت و پنج هزار تومان. بابانوئل برای کریسمس",
+					"available": 3,
+					"images": [
+						"products/a02/0.jpg"
 					],
 					"mainImage": 0
 				}
