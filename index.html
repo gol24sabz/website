@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="خرید آنلاین صنایع دستی بافتنی، لیف‌های عروسکی و گیاهان آپارتمانی با کیفیت از گلستان سبزوار">
+		<meta property="og:title" content="گلستان سبزوار">
+		<title>گلستان سبزوار | فروشگاه هنرهای دستی و گیاهان</title>
+		<link rel="stylesheet" href="main.css">
+	</head>
+	<body>
+		<h1>به فروشگاه گلستان سبزوار خوش‌آمدید</h1>
+		<button id="theme-toggle">☀️/🌙</button>
+		<script>
+			const toggle = document.getElementById('theme-toggle');
+			const savedTheme = localStorage.getItem('theme') || 'light';
+			document.documentElement.setAttribute('data-theme', savedTheme);
+			toggle.addEventListener('click', () => {
+				const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+				document.documentElement.setAttribute('data-theme', newTheme);
+				localStorage.setItem('theme', newTheme);
+			});
+		</script>
+		<!-- change onclick="window.location.href='some.html'" -->
+		<button id="admin-button" onclick="">🧶</button>
+
+		<div id="products-container">
+			<!-- Category cards will be inserted here -->
+		</div>
+
+		<!-- Product Detail Modal -->
+		<div id="product-modal" class="modal">
+			<div class="modal-content">
+				<span class="close">&times;</span>
+				<div class="modal-body">
+					<h2 id="modal-product-title"></h2>
+					<div class="image-carousel">
+						<div class="carousel-container" id="carousel-container"></div>
+						<button class="carousel-btn prev">&#10094;</button>
+						<button class="carousel-btn next">&#10095;</button>
+					</div>
+					<div class="product-info">
+						<p class="price" id="modal-product-price"></p>
+						<p class="available" id="modal-product-available"></p>
+						<p class="description" id="modal-product-description"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			let currentProductsData = {};
+			let currentCarouselIndex = 0;
+			// Create one Intersection Observer to watch all product items
+			let productObserver;
+
+			async function loadProducts() {
+				try {
+					const response = await fetch('/products/index.json');
+					if (!response.ok) throw new Error('خطا در بارگذاری محصولات');
+
+					currentProductsData = await response.json();
+					renderCategoryCards(currentProductsData.categories);
+					// Initialize the observer AFTER the products are rendered
+					setupProductObserver();
+				} catch (error) {
+					console.error("Error loading products:", error);
+					document.getElementById('products-container').innerHTML = `
+	    <div class="error">
+		خطا در بارگذاری محصولات. لطفاً صفحه را رفرش کنید.
+	    </div>
+	`;
+				}
+			}
+
+			function renderCategoryCards(categories) {
+				const container = document.getElementById('products-container');
+				container.innerHTML = '';
+
+				Object.entries(categories).forEach(([categoryName, categoryData]) => {
+					const categoryCard = document.createElement('div');
+					categoryCard.className = 'category-card';
+
+					categoryCard.innerHTML = `
+	    <h2 class="category-title">${categoryName}</h2>
+	    <div class="products-scroller">
+		${categoryData.products.map(product => `
+		    <div class="product-item" onclick="showProductModal('${categoryName}', '${product.id}')">
+			<h3>${product.name}</h3>
+			<div class="product-image-container">
+			    <!-- Change 'src' to 'data-src' and use a tiny placeholder or leave blank -->
+ <!-- Good default, but our observer is better for dynamically added content -->
+			    <img data-src="${product.images[product.mainImage || 0]}"
+				 alt="${product.name}"
+				 loading="lazy"
+				 class="lazy-load"> <!-- Add a class for the observer to target -->
+			</div>
+			<p class="price">${product.price.toLocaleString()} تومان</p>
+			<p class="available">موجودی: ${product.available} عدد</p>
+		    </div>
+		`).join('')}
+	    </div>
+	`;
+
+					container.appendChild(categoryCard);
+				});
+			}
+
+			// NEW FUNCTION: Sets up the observer to watch for product items entering the viewport
+			function setupProductObserver() {
+				// Check if the browser supports Intersection Observer
+				if (!('IntersectionObserver' in window)) {
+					// Fallback: load all images immediately if not supported
+					const lazyImages = document.querySelectorAll('img.lazy-load');
+					lazyImages.forEach(img => {
+						img.src = img.dataset.src;
+					});
+					return;
+				}
+				// Configure the observer: load the image when it's within 200px of the viewport
+				const observerOptions = {
+					root: null, // observes against the viewport
+					rootMargin: '200px', // load images 200px before they enter the viewport
+					threshold: 0.1
+				};
+
+				productObserver = new IntersectionObserver((entries, observer) => {
+					entries.forEach(entry => {
+						if (entry.isIntersecting) {
+							// This image is now in (or near) the viewport
+							const img = entry.target;
+							img.src = img.dataset.src; // Replace data-src with actual src
+							img.classList.remove('lazy-load'); // Remove the class if needed
+							productObserver.unobserve(img); // Stop observing this image
+						}
+					});
+				}, observerOptions);
+
+				// Start observing all lazy-loaded images
+				const lazyImages = document.querySelectorAll('img.lazy-load');
+				lazyImages.forEach(img => {
+					productObserver.observe(img);
+				});
+			}
+
+			function showProductModal(categoryName, productId) {
+				const category = currentProductsData.categories[categoryName];
+				if (!category) return;
+
+				const product = category.products.find(p => p.id === productId);
+				if (!product) return;
+
+				// Set modal content
+				document.getElementById('modal-product-title').textContent = product.name;
+				document.getElementById('modal-product-price').textContent = `${product.price.toLocaleString()} تومان`;
+				document.getElementById('modal-product-available').textContent = `موجودی: ${product.available} عدد`;
+				document.getElementById('modal-product-description').textContent = product.description || '';
+
+				// Create image carousel
+				const carouselContainer = document.getElementById('carousel-container');
+				carouselContainer.innerHTML = '';
+				product.images.forEach((image, index) => {
+					carouselContainer.innerHTML += `
+		    <div class="carousel-slide ${index === 0 ? 'active' : ''}">
+			<img src="${image}" alt="${product.name} - تصویر ${index + 1}">
+		    </div>
+		`;
+				});
+
+				currentCarouselIndex = 0;
+				updateCarousel();
+
+				// Show modal
+				document.getElementById('product-modal').style.display = 'block';
+			}
+
+			function updateCarousel() {
+				const slides = document.querySelectorAll('.carousel-slide');
+				slides.forEach((slide, index) => {
+					slide.classList.toggle('active', index === currentCarouselIndex);
+				});
+			}
+
+			function navigateCarousel(direction) {
+				const slides = document.querySelectorAll('.carousel-slide');
+				if (slides.length === 0) return;
+
+				if (direction === 'prev') {
+					currentCarouselIndex = (currentCarouselIndex - 1 + slides.length) % slides.length;
+				} else {
+					currentCarouselIndex = (currentCarouselIndex + 1) % slides.length;
+				}
+				updateCarousel();
+			}
+
+			// Event listeners
+			document.addEventListener('DOMContentLoaded', () => {
+				loadProducts();
+
+				// Modal close button
+				document.querySelector('.close').addEventListener('click', () => {
+					document.getElementById('product-modal').style.display = 'none';
+				});
+
+				// Carousel buttons
+				document.querySelector('.prev').addEventListener('click', () => navigateCarousel('prev'));
+				document.querySelector('.next').addEventListener('click', () => navigateCarousel('next'));
+
+				// Close modal when clicking outside
+				window.addEventListener('click', (event) => {
+					if (event.target === document.getElementById('product-modal')) {
+						document.getElementById('product-modal').style.display = 'none';
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

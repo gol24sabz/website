@@ -1,0 +1,301 @@
+:root {
+	--bg: #fff;
+	--text: #222;
+	--border: #ddd;
+	--primary: #4a6fa5;
+	--secondary: #f8f9fa;
+	--error: #dc3545;
+}
+[data-theme="dark"] {
+	--bg: #222;
+	--text: #eee;
+	--border: #444;
+	--primary: #6c8fc7;
+	--secondary: #333;
+}
+body {
+	background: var(--bg);
+	color: var(--text);
+	transition: all 0.3s;
+	font-family: Tahoma, sans-serif;
+	margin: 2rem;
+}
+#theme-toggle {
+	position: fixed;
+	top: 1rem;
+	left: 1rem;
+	z-index: 100;
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 50%;
+	padding: 0.5rem;
+	cursor: pointer;
+}
+#admin-button {
+	position: fixed;
+	top: 1rem;
+	left: 6rem;
+	z-index: 100;
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 50%;
+	padding: 0.5rem;
+	cursor: pointer;
+}
+
+#products-container {
+	margin-top: 2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+.category-card {
+	background: var(--secondary);
+	border-radius: 8px;
+	padding: 1rem;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.category-title {
+	color: var(--primary);
+	margin-bottom: 1rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 2px solid var(--primary);
+}
+
+.products-scroller {
+	display: flex;
+	overflow-x: auto;
+	gap: 1.5rem;
+	padding: 1rem 0;
+	scrollbar-width: thin;
+	scrollbar-color: var(--primary) var(--secondary);
+}
+
+.products-scroller::-webkit-scrollbar {
+	height: 8px;
+}
+
+.products-scroller::-webkit-scrollbar-track {
+	background: var(--secondary);
+	border-radius: 4px;
+}
+
+.products-scroller::-webkit-scrollbar-thumb {
+	background-color: var(--primary);
+	border-radius: 4px;
+}
+
+.product-item {
+	min-width: 250px;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	padding: 1rem;
+	background: var(--bg);
+	transition: transform 0.2s;
+}
+
+.product-item:hover {
+	transform: translateY(-5px);
+}
+
+.product-image-container {
+  position: relative;
+  width: 100%; /* Adjust as needed */
+  /* Example for a square container: */
+  aspect-ratio: 1 / 1;
+  overflow: hidden; /* Optional, for styling */
+}
+
+.product-image-container img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* This makes the image fill the container without stretching */
+  transition: opacity 0.3s ease; /* Optional: for a fade-in effect */
+}
+
+.product-item img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.3s;
+}
+
+.product-item:hover img {
+	transform: scale(1.05);
+}
+
+.product-item h3 {
+	margin: 0.5rem 0;
+	color: var(--primary);
+}
+
+.price {
+	font-weight: bold;
+	color: green;
+}
+
+.available {
+	color: #6c757d;
+	font-size: 0.9rem;
+	margin: 0.5rem 0;
+}
+
+.description {
+	font-size: 0.9rem;
+	line-height: 1.5;
+}
+
+.error {
+	padding: 1rem;
+	background: #f8d7da;
+	color: var(--error);
+	border-radius: 4px;
+	border: 1px solid #f5c6cb;
+}
+
+@media (max-width: 768px) {
+	.product-item {
+		min-width: 200px;
+	}
+
+	.product-image-container {
+		height: 150px;
+	}
+}
+
+
+
+
+.tab { display: none; }
+.tab.active { display: block; }
+.tab-buttons {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 1rem;
+}
+.tab-buttons button {
+	padding: 0.5rem 1rem;
+	background: var(--bg);
+	color: var(--text);
+	border: 1px solid var(--text);
+	border-radius: 4px;
+	cursor: pointer;
+}
+.tab-buttons button:hover {
+	background: var(--text);
+	color: var(--bg);
+}
+/* Modal Styles */
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.8);
+}
+
+.modal-content {
+	background-color: var(--bg);
+	margin: 5% auto;
+	padding: 2rem;
+	border-radius: 8px;
+	width: 80%;
+	max-width: 800px;
+	position: relative;
+}
+
+.close {
+	position: absolute;
+	top: 1rem;
+	left: 1rem;
+	font-size: 2rem;
+	color: var(--text);
+	cursor: pointer;
+}
+
+.modal-body {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+/* Image Carousel Styles */
+.image-carousel {
+	position: relative;
+	width: 100%;
+	height: 400px;
+	overflow: hidden;
+	border-radius: 8px;
+}
+
+.carousel-container {
+	display: flex;
+	height: 100%;
+	transition: transform 0.5s ease;
+}
+
+.carousel-slide {
+	min-width: 100%;
+	height: 100%;
+	display: none;
+}
+
+.carousel-slide.active {
+	display: block;
+}
+
+.carousel-slide img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.carousel-btn {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	background-color: rgba(0,0,0,0.5);
+	color: white;
+	border: none;
+	padding: 1rem;
+	cursor: pointer;
+	font-size: 1.5rem;
+	z-index: 10;
+}
+
+.carousel-btn.prev {
+	left: 1rem;
+}
+
+.carousel-btn.next {
+	right: 1rem;
+}
+
+.product-info {
+	padding: 0 1rem;
+}
+
+@media (max-width: 768px) {
+	.modal-content {
+		width: 90%;
+		margin: 2% auto;
+		padding: 1rem;
+	}
+
+	.image-carousel {
+		height: 300px;
+	}
+}
+
+.product-image-container img.lazy-load {
+  opacity: 0;
+}
+.product-image-container img {
+  opacity: 1;
+}

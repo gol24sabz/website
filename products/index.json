@@ -1,0 +1,108 @@
+{
+	"categories": {
+		"لیف": {
+			"products": [
+				{
+					"id": "1",
+					"name": "لیف بابانوئل",
+					"price": 80000,
+					"description": "تکی هشتاد هزار تومان و خرید عمده هر عدد شصت و پنج هزار تومان. بابانوئل برای کریسمس",
+					"available": 3,
+					"images": [
+						"products/arosaki-01-01.webp"
+					],
+					"mainImage": 0
+				},
+				{
+					"id": "2",
+					"name": "لیف دم دار",
+					"price": 80000,
+					"description": "در رنگ‌بندی متنوع",
+					"available": 3,
+					"images": [
+						"products/washcloth-01-01.webp",
+						"products/washcloth-01-02.webp",
+						"products/washcloth-01-03.webp",
+						"products/washcloth-01-04.webp",
+						"products/washcloth-01-05.webp"
+					],
+					"mainImage": 1
+				}
+			]
+		},
+		"اسکاج": {
+			"products": [
+				{
+					"id": "1",
+					"name": "نوع یک",
+					"price": 45000,
+					"description": "اسکاج نوع یک",
+					"available": 5,
+					"images": [
+						"products/dishcloth-01-01.webp"
+					],
+					"mainImage": 0
+				},
+				{
+					"id": "2",
+					"name": "نوع دو",
+					"price": 50000,
+					"description": "اسکاج نوع دو",
+					"available": 5,
+					"images": [
+						"products/dishcloth-02-01.webp"
+					],
+					"mainImage": 0
+				},
+				{
+					"id": "3",
+					"name": "نوع سه",
+					"price": 45000,
+					"description": "اسکاج نوع سه",
+					"available": 5,
+					"images": [
+						"products/dishcloth-03-01.webp"
+					],
+					"mainImage": 0
+				},
+				{
+					"id": "4",
+					"name": "نوع چهار",
+					"price": 45000,
+					"description": "اسکاج نوع سه",
+					"available": 5,
+					"images": [
+						"products/dishcloth-04-01.webp"
+					],
+					"mainImage": 0
+				},
+				{
+					"id": "5",
+					"name": "نوع پنج",
+					"price": 50000,
+					"description": "اسکاج نوع پنج",
+					"available": 5,
+					"images": [
+						"products/dishcloth-05-01.webp"
+					],
+					"mainImage": 0
+				}
+			]
+		},
+		"کاکتوس": {
+			"products": [
+				{
+					"id": "1",
+					"name": "کاکتوس انجیرتیغی",
+					"price": 300000,
+					"description": "کاکتوس انجیرتیغی (Opuntia) بومی آمریکا و پوست کلفت است.",
+					"available": 5,
+					"images": [
+						"products/opuntia-01-01.webp"
+					],
+					"mainImage": 0
+				}
+			]
+		}
+	}
+}
